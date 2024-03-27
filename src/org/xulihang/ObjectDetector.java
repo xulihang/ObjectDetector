@@ -15,8 +15,6 @@ import org.opencv.dnn.DetectionModel;
 import org.opencv.imgcodecs.Imgcodecs;
 
 
-
-
 public class ObjectDetector {
 
 	private DetectionModel net;
@@ -78,7 +76,8 @@ public class ObjectDetector {
 
 	public List<Rect2d> Detect(Mat img) {
 		net.setInputSize(new Size(inpWidth,inpHeight));
-		net.setInputScale(scalefactor);
+		Scalar scaleFactorScalar = new Scalar(scalefactor);
+		net.setInputScale(scaleFactorScalar);
 		net.setInputMean(mean);
 		net.setInputSwapRB(swapRB);
 		net.setInputCrop(crop);

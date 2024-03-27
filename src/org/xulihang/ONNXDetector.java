@@ -7,12 +7,16 @@ import java.util.List;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfRect2d;
 import org.opencv.core.Rect2d;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.utils.Converters;
 
 
 public class ONNXDetector {
@@ -60,38 +64,49 @@ public class ONNXDetector {
         outputs.get(0).get(0, 0, data);
         float x_factor = img.cols() / 640;
         float y_factor = img.rows() / 640;
-        List<Float> confidences = new ArrayList<>();
+        List<Float> confs = new ArrayList<>();
         List<Rect2d> boxes = new ArrayList<>();
-        
-        System.out.println("data length");
-        System.out.println(data.length);
         for (int i = 0; i < data.length/4; ++i) {
-        	
-            //double[] classes_scores = getSlice(raw_classes_scores,5,raw_classes_scores.length);
-			//Mat scores = new Mat(1, classes_scores.length, CvType.CV_32FC1);
-            //scores.put(0, 0, classes_scores);
-            //Core.MinMaxLocResult mm = Core.minMaxLoc(scores);
-            //double confidence = mm.maxVal;
-            //System.out.println("confidence");
-            //System.out.println(confidence);
+        	Mat scores = outputs.get(0).row(i);
+            Core.MinMaxLocResult mm = Core.minMaxLoc(scores);
+            float confidence = (float) (mm.maxVal/100);
+            confs.add(confidence);
         	float x = data[0+i*4];
             float y = data[1+i*4];
             float w = data[2+i*4];
             float h = data[3+i*4];
-            
             int left = (int) ((x - 0.5 * w) * x_factor);
             int top = (int) ((y - 0.5 * h) * y_factor);
-            System.out.println(left);
             int width = (int) (w * x_factor);
             int height = (int) (h * y_factor);
             Rect2d box = new Rect2d(left, top, width, height);
-            //System.out.println(box);
-            //System.out.println(box.width);
-            //System.out.println(box.height);
             boxes.add(box);
         }
-        //System.out.println(boxes.size());
-	    return boxes;
+        if (boxes.size()>1) {
+
+	        Mat converted = Converters.vector_float_to_Mat(confs);
+	        MatOfFloat confidences = new MatOfFloat(converted);
+	        Rect2d[] boxesArray = boxes.toArray(new Rect2d[0]);
+	        MatOfRect2d matBoxes = new MatOfRect2d(boxesArray);
+	        //boxes.fromArray(boxesArray);
+	        MatOfInt indices = new MatOfInt();
+	        Dnn.NMSBoxes(matBoxes, confidences, confThreshold, nmsThresh, indices);
+	        int [] ind = indices.toArray();
+	        List<Rect2d> boxesAfterNMS = new ArrayList<>();
+	        for (int i = 0; i < ind.length; ++i)
+	        {
+	            int idx = ind[i];
+	            Rect2d box = boxesArray[idx];
+	            int width   = (int)box.width;
+                int height  = (int)box.height;
+                int left    = (int)box.x;
+                int top     = (int)box.y;
+                boxesAfterNMS.add(new Rect2d(left,top,width,height));
+	        }
+	        return boxesAfterNMS;
+        }else {
+        	return boxes;
+        }
 	}
 	
 	public double[] getSlice(double[] arr, int stIndx, int enIndx) {

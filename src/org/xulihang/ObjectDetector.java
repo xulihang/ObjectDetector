@@ -27,6 +27,12 @@ public class ObjectDetector {
 	private boolean swapRB;
 	private boolean crop;
 
+	public ObjectDetector(String modelPath,int width,int height) {
+		net = new DetectionModel(modelPath);
+		inpWidth=width;
+		inpHeight=height;
+		init();
+	}
 
 	public ObjectDetector(String modelPath, String modelCfg, int width,int height) {
 		net = new DetectionModel(modelPath,modelCfg);

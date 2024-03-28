@@ -1,6 +1,5 @@
 package org.xulihang;
 
-
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
@@ -29,5 +28,4 @@ public class Test {
 			e.printStackTrace();
 		}
 	}
-
 }

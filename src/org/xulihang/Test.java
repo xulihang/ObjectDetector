@@ -1,5 +1,7 @@
 package org.xulihang;
 
+import java.util.List;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
@@ -16,7 +18,7 @@ public class Test {
         //ObjectDetector detector = new ObjectDetector("G://yolo//yolov8n.onnx",640,640);
         try {
         	Mat img = Imgcodecs.imread("G://git//object-detection-and-barcode-reading//IMG20240326163255.jpg");
-			var results = detector.Detect(img);
+			List<Rect2d> results = detector.Detect(img);
 			System.out.println(results);
 			System.out.println(results.size());
 			for (Rect2d rect:results) {

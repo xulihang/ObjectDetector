@@ -57,6 +57,14 @@ public class DarkNetDetector {
 		swapRB = false;
 		crop = false;
 	}
+	
+	public void setWidth(int width) {
+		inpWidth = width;
+	}
+	
+	public void setHeight(int height) {
+		inpHeight = height;
+	}
 
 	public void setConfThreshold(float value) {
 		confThreshold=value;

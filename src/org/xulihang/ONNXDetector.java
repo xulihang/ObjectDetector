@@ -20,8 +20,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 public class ONNXDetector {
 	private Net net;
-	private int inpHeight;
-	private int inpWidth;
+	private int inpHeight = 640;
+	private int inpWidth = 640;
 	private float confThreshold;
 	private float nmsThresh;
 	private double scalefactor;
@@ -82,8 +82,8 @@ public class ONNXDetector {
 		Mat predict = net.forward();
 		Mat mask = predict.reshape(0,1).reshape(0, predict.size(1));
 		
-		double width = img.cols() / inpWidth;
-		double height = img.rows() / inpHeight;
+		double width = img.cols() / (double) inpWidth;
+		double height = img.rows() / (double) inpHeight;
 		Rect2d[] rect2d = new Rect2d[mask.cols()];
 		float[] scoref = new float[mask.cols()];
 		int[] classid = new int[mask.cols()];

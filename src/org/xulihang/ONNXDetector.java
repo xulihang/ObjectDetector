@@ -76,8 +76,18 @@ public class ONNXDetector {
 		Mat img = Imgcodecs.imread(imgPath);
 	    return Detect(img);
 	}
-
+	
 	public List<Rect2d> Detect(Mat img) {
+		List<Rect2d> boxes = new ArrayList<Rect2d>();
+		List<DetectedObject> detectedObjects = DetectWithClassID(img);
+		for (int i = 0; i < detectedObjects.size(); i++) {
+			DetectedObject detectedObject = detectedObjects.get(i);
+		    boxes.add(detectedObject.box);
+		}
+		return boxes;
+	}
+
+	public List<DetectedObject> DetectWithClassID(Mat img) {
 		
 		Mat blob = Dnn.blobFromImage(img, scalefactor, new Size(inpWidth,inpHeight));
 		net.setInput(blob);
@@ -105,11 +115,13 @@ public class ONNXDetector {
 		MatOfInt indices = new MatOfInt();
 		Dnn.NMSBoxes(bboxes, scores, confThreshold,nmsThresh, indices);
 		List<Integer> result = indices.toList();
-		List<Rect2d> boxes = new ArrayList<Rect2d>();
+		List<DetectedObject> detectedObjects = new ArrayList<DetectedObject>();
 		for (Integer integer : result) {
-			boxes.add(new Rect2d(rect2d[integer].tl(),rect2d[integer].size()));
+			Rect2d rect = new Rect2d(rect2d[integer].tl(),rect2d[integer].size());
+			DetectedObject detectedObject = new DetectedObject(rect,classid[integer]);
+			detectedObjects.add(detectedObject);
 		}
-		return boxes;
+		return detectedObjects;
 	}
 	
 }

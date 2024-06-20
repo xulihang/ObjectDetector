@@ -38,12 +38,14 @@ public class Test {
 	        detector.setWidth(640);
 	        detector.setHeight(640);
         	Mat img = Imgcodecs.imread("G:\\imagetrans_project\\sq_test\\2.jpg");
-			List<Rect2d> results = detector.Detect(img);
+			List<DetectedObject> results = detector.DetectWithClassID(img);
+			//System.out.println(results.get(0).classId);
 			System.out.println(results);
 			System.out.println(results.size());
-			for (Rect2d rect:results) {
+			for (DetectedObject result:results) {
+				Rect2d rect = result.box;
 				Imgproc.rectangle(img, new Rect((int)rect.x,(int)rect.y,(int)rect.width,(int)rect.height), new Scalar(255,0,0),5);
-			}
+		    }
 			Imgcodecs.imwrite("G:\\imagetrans_project\\sq_test\\out.jpg",img);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

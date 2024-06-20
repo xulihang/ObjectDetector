@@ -1,6 +1,8 @@
 package org.xulihang;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfRect2d;
+import org.opencv.core.MatOfByte;  
 import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
 import org.opencv.core.Scalar;
@@ -40,11 +43,20 @@ public class DarkNetDetector {
 		init();
 	}
 
-	public DarkNetDetector(String darkNetConfig, String modelWeights, int width,int height) {
-		net = Dnn.readNetFromDarknet(darkNetConfig, modelWeights);
+	public DarkNetDetector(String darkNetConfig, String modelWeights, int width,int height) throws IOException {
+        MatOfByte configMat = readFileAsMatOfByte(darkNetConfig);
+        MatOfByte weightsMat = readFileAsMatOfByte(modelWeights);
+		net = Dnn.readNetFromDarknet(configMat, weightsMat);
 		inpWidth=width;
 		inpHeight=height;
 		init();
+	}
+	
+	private MatOfByte readFileAsMatOfByte(String path) throws IOException {
+		File file = new File(path);
+		byte[] bytes = Files.readAllBytes(file.toPath());
+		MatOfByte mat = new MatOfByte(bytes);
+		return mat;
 	}
 
 	public void init() {

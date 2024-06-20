@@ -16,6 +16,7 @@ public class Test {
 		// TODO Auto-generated method stub
         System.load("G://opencv_java490.dll");
         darknetTest();
+        onnxTest();
 	}
 	
 	static private void darknetTest() {
@@ -31,12 +32,12 @@ public class Test {
 	}
 	
 	static private void onnxTest() {
-        ONNXDetector detector = new ONNXDetector("C:\\Users\\admin\\Desktop\\git\\ImageTrans\\Objects\\model.onnx");
-        //ObjectDetector detector = new ObjectDetector("G://yolo//yolov8n.onnx",640,640);
-        detector.setWidth(1024);
-        detector.setHeight(1024);
-        try {
-        	Mat img = Imgcodecs.imread("G:\\imagetrans_project\\sq_test\\4d8b0b03ly1g3f1969vkhj20i26skhdv.jpg");
+		try {
+			ONNXDetector detector = new ONNXDetector("G:\\imagetrans_project\\sq_test\\model.onnx");
+			 //ObjectDetector detector = new ObjectDetector("G://yolo//yolov8n.onnx",640,640);
+	        detector.setWidth(640);
+	        detector.setHeight(640);
+        	Mat img = Imgcodecs.imread("G:\\imagetrans_project\\sq_test\\2.jpg");
 			List<Rect2d> results = detector.Detect(img);
 			System.out.println(results);
 			System.out.println(results.size());
@@ -44,9 +45,10 @@ public class Test {
 				Imgproc.rectangle(img, new Rect((int)rect.x,(int)rect.y,(int)rect.width,(int)rect.height), new Scalar(255,0,0),5);
 			}
 			Imgcodecs.imwrite("G:\\imagetrans_project\\sq_test\\out.jpg",img);
-		} catch (Exception e) {
+		} catch (Exception e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
+       
 	}
 }

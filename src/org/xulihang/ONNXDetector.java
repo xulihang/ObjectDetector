@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfRect2d;
@@ -28,8 +29,9 @@ public class ONNXDetector {
 	private Scalar mean;
 	private boolean swapRB;
 	private boolean crop;
-	public ONNXDetector(String onnxPath) {
-		net = Dnn.readNetFromONNX(onnxPath);
+	public ONNXDetector(String onnxPath) throws IOException {
+		MatOfByte bytes = ModelUtils.readFileAsMatOfByte(onnxPath);
+		net = Dnn.readNetFromONNX(bytes);
 		confThreshold=0.3f;
 		nmsThresh = 0.5f;
 		scalefactor = 1/255.0;

@@ -44,19 +44,12 @@ public class DarkNetDetector {
 	}
 
 	public DarkNetDetector(String darkNetConfig, String modelWeights, int width,int height) throws IOException {
-        MatOfByte configMat = readFileAsMatOfByte(darkNetConfig);
-        MatOfByte weightsMat = readFileAsMatOfByte(modelWeights);
+        MatOfByte configMat = ModelUtils.readFileAsMatOfByte(darkNetConfig);
+        MatOfByte weightsMat = ModelUtils.readFileAsMatOfByte(modelWeights);
 		net = Dnn.readNetFromDarknet(configMat, weightsMat);
 		inpWidth=width;
 		inpHeight=height;
 		init();
-	}
-	
-	private MatOfByte readFileAsMatOfByte(String path) throws IOException {
-		File file = new File(path);
-		byte[] bytes = Files.readAllBytes(file.toPath());
-		MatOfByte mat = new MatOfByte(bytes);
-		return mat;
 	}
 
 	public void init() {

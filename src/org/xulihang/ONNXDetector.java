@@ -30,8 +30,12 @@ public class ONNXDetector {
 	private boolean swapRB;
 	private boolean crop;
 	public ONNXDetector(String onnxPath) throws IOException {
-		MatOfByte bytes = ModelUtils.readFileAsMatOfByte(onnxPath);
-		net = Dnn.readNetFromONNX(bytes);
+		try {
+			net = Dnn.readNetFromONNX(onnxPath);	
+		}catch (Exception e) {
+			MatOfByte bytes = ModelUtils.readFileAsMatOfByte(onnxPath);
+			net = Dnn.readNetFromONNX(bytes);
+		}
 		confThreshold=0.3f;
 		nmsThresh = 0.5f;
 		scalefactor = 1/255.0;

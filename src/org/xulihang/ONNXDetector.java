@@ -103,11 +103,18 @@ public class ONNXDetector {
 		Rect2d[] rect2d = new Rect2d[mask.cols()];
 		float[] scoref = new float[mask.cols()];
 		int[] classid = new int[mask.cols()];
+		float[] theta = new float[mask.cols()];
+
 		for (int i = 0; i < mask.cols(); i++) {
 			double[] x = mask.col(i).get(0, 0);
 			double[] y = mask.col(i).get(1, 0);
 			double[] w = mask.col(i).get(2, 0);
 			double[] h = mask.col(i).get(3, 0);
+			theta[i] = (float) mask.col(i).get(mask.col(0).rows()-1, 0)[0];
+			if (theta[i]>=Math.PI && theta[i] <= 0.75*Math.PI)
+	        {
+				theta[i]=(float) (theta[i]-Math.PI);
+	        } 
 			rect2d[i] = new Rect2d((x[0]-w[0]/2)*width, (y[0]-h[0]/2)*height, w[0]*width, h[0]*height);
 			Mat score = mask.col(i).submat(4, predict.size(1)-1, 0, 1);
 			MinMaxLocResult mmr = Core.minMaxLoc(score);
@@ -123,6 +130,7 @@ public class ONNXDetector {
 		for (Integer integer : result) {
 			Rect2d rect = new Rect2d(rect2d[integer].tl(),rect2d[integer].size());
 			DetectedObject detectedObject = new DetectedObject(rect,classid[integer]);
+			detectedObject.theta = theta[integer];
 			detectedObjects.add(detectedObject);
 		}
 		return detectedObjects;

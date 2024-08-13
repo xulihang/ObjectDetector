@@ -111,10 +111,6 @@ public class ONNXDetector {
 			double[] w = mask.col(i).get(2, 0);
 			double[] h = mask.col(i).get(3, 0);
 			theta[i] = (float) mask.col(i).get(mask.col(0).rows()-1, 0)[0];
-			if (theta[i]>=Math.PI && theta[i] <= 0.75*Math.PI)
-	        {
-				theta[i]=(float) (theta[i]-Math.PI);
-	        } 
 			rect2d[i] = new Rect2d((x[0]-w[0]/2)*width, (y[0]-h[0]/2)*height, w[0]*width, h[0]*height);
 			Mat score = mask.col(i).submat(4, predict.size(1)-1, 0, 1);
 			MinMaxLocResult mmr = Core.minMaxLoc(score);

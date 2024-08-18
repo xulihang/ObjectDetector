@@ -14,14 +14,14 @@ public class Test {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-        System.load("G://opencv_java490.dll");
-        darknetTest();
+        System.load("C://root//opencv_java490.dll");
+        //darknetTest();
         onnxTest();
 	}
 	
 	static private void darknetTest() {
 		try {
-			DarkNetDetector detector = new DarkNetDetector("C:\\Users\\admin\\Desktop\\git\\ImageTrans\\Objects\\ÆøÅÝ¼ì²âÄ£ÐÍ\\model.cfg","C:\\Users\\admin\\Desktop\\git\\ImageTrans\\Objects\\ÆøÅÝ¼ì²âÄ£ÐÍ\\model.weights",640,960);
+			DarkNetDetector detector = new DarkNetDetector("C:\\Users\\admin\\Desktop\\git\\ImageTrans\\Objects\\ï¿½ï¿½ï¿½Ý¼ï¿½ï¿½Ä£ï¿½ï¿½\\model.cfg","C:\\Users\\admin\\Desktop\\git\\ImageTrans\\Objects\\ï¿½ï¿½ï¿½Ý¼ï¿½ï¿½Ä£ï¿½ï¿½\\model.weights",640,960);
 			Mat img = Imgcodecs.imread("G:\\imagetrans_project\\sq_test\\2.jpg");
 			List<Rect2d> results = detector.Detect(img);
 			System.out.println(results);
@@ -33,11 +33,11 @@ public class Test {
 	
 	static private void onnxTest() {
 		try {
-			ONNXDetector detector = new ONNXDetector("G:\\imagetrans_project\\sq_test\\model.onnx");
+			ONNXDetector detector = new ONNXDetector("C:\\Users\\HP\\Documents\\ImageTrans\\imagetrans_projects\\obb_test\\best.onnx");
 			 //ObjectDetector detector = new ObjectDetector("G://yolo//yolov8n.onnx",640,640);
 	        detector.setWidth(640);
 	        detector.setHeight(640);
-        	Mat img = Imgcodecs.imread("G:\\imagetrans_project\\sq_test\\2.jpg");
+        	Mat img = Imgcodecs.imread("C:\\Users\\HP\\Documents\\ImageTrans\\imagetrans_projects\\obb_test\\QXA030021.jpg");
 			List<DetectedObject> results = detector.DetectWithClassID(img);
 			//System.out.println(results.get(0).classId);
 			System.out.println(results);
@@ -46,7 +46,7 @@ public class Test {
 				Rect2d rect = result.box;
 				Imgproc.rectangle(img, new Rect((int)rect.x,(int)rect.y,(int)rect.width,(int)rect.height), new Scalar(255,0,0),5);
 		    }
-			Imgcodecs.imwrite("G:\\imagetrans_project\\sq_test\\out.jpg",img);
+			Imgcodecs.imwrite("C:\\Users\\HP\\Documents\\ImageTrans\\imagetrans_projects\\obb_test\\out.jpg",img);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

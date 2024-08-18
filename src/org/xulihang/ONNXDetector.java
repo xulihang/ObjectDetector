@@ -10,7 +10,10 @@ import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfRect2d;
+import org.opencv.core.MatOfRotatedRect;
+import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.core.Core.MinMaxLocResult;
@@ -101,6 +104,7 @@ public class ONNXDetector {
 		double width = img.cols() / (double) inpWidth;
 		double height = img.rows() / (double) inpHeight;
 		Rect2d[] rect2d = new Rect2d[mask.cols()];
+		RotatedRect[] rectRotated = new RotatedRect[mask.cols()];
 		float[] scoref = new float[mask.cols()];
 		int[] classid = new int[mask.cols()];
 		float[] theta = new float[mask.cols()];
@@ -112,15 +116,18 @@ public class ONNXDetector {
 			double[] h = mask.col(i).get(3, 0);
 			theta[i] = (float) mask.col(i).get(mask.col(0).rows()-1, 0)[0];
 			rect2d[i] = new Rect2d((x[0]-w[0]/2)*width, (y[0]-h[0]/2)*height, w[0]*width, h[0]*height);
+			Point center = new Point(rect2d[i].x + rect2d[i].width/2,rect2d[i].y + rect2d[i].height/2);
+			Size size = new Size(rect2d[i].width,rect2d[i].height);
+			rectRotated[i] = new RotatedRect(center,size,theta[i]*180/Math.PI);
 			Mat score = mask.col(i).submat(4, predict.size(1)-1, 0, 1);
 			MinMaxLocResult mmr = Core.minMaxLoc(score);
 			scoref[i] = (float)mmr.maxVal;
 			classid[i] = (int) mmr.maxLoc.y;
 		}
-		MatOfRect2d bboxes = new MatOfRect2d(rect2d);
+		MatOfRotatedRect bboxes = new MatOfRotatedRect(rectRotated);
 		MatOfFloat scores = new MatOfFloat(scoref);
 		MatOfInt indices = new MatOfInt();
-		Dnn.NMSBoxes(bboxes, scores, confThreshold,nmsThresh, indices);
+		Dnn.NMSBoxesRotated(bboxes, scores, confThreshold,nmsThresh, indices);
 		List<Integer> result = indices.toList();
 		List<DetectedObject> detectedObjects = new ArrayList<DetectedObject>();
 		for (Integer integer : result) {
